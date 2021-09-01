@@ -1,0 +1,92 @@
+version: "3"
+
+services:
+  mongodb1:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb1
+    tty: true
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    env_file:
+      - ./.env
+    volumes:
+      - ./data/mongodata1:/data/db
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--replSet",
+        "rsmongo",
+        "--bind_ip_all",
+        "--wiredTigerCacheSizeGB",
+        "1",
+      ]
+
+  mongodb2:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb2
+    tty: true
+    ports:
+      - "27018:27018"
+    expose:
+      - "27017"
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    env_file:
+      - ./.env
+    volumes:
+      - ./data/mongodata2:/data/db
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--replSet",
+        "rsmongo",
+        "--bind_ip_all",
+        "--wiredTigerCacheSizeGB",
+        "1",
+      ]
+
+  mongodb3:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb3
+    tty: true
+    ports:
+      - "27019:27019"
+    expose:
+      - "27017"
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    env_file:
+      - ./.env
+    volumes:
+      - ./data/mongodata3:/data/db
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--replSet",
+        "rsmongo",
+        "--bind_ip_all",
+        "--wiredTigerCacheSizeGB",
+        "1",
+      ]
+
+  mongosetup:
+    image: "mongo-setup"
+    build: "./mongo-setup"
+    container_name: "mongosetup"
+    depends_on:
+      - mongodb1
+    volumes:
+      - ./data/mongostatus:/data/
+
+volumes:
+  mongodata1:
+  mongodata2:
+  mongodata3:
+  mongostatus:
